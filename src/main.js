@@ -2,26 +2,28 @@
 // import 'element-plus/dist/index.css'
 
 import {
-	createApp
-} from 'vue'
-import App from './App.vue'
+    createApp,
+} from "vue";
+import App from "./App.vue";
 import {
-	createPinia
-} from 'pinia'
+    createPinia,
+} from "pinia";
 
-import Vant from 'vant';
-import '@vant/touch-emulator';
-import 'vant/lib/index.css';
+// import Vant from 'vant';
+// import '@vant/touch-emulator';
+// import 'vant/lib/index.css';
 
-import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
+import ElementPlus from "element-plus";
+import "element-plus/dist/index.css";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 
-const app = createApp(App)
+import vueRightMenu from "vue-right-click-menu-next";
 
-app.use(Vant)
+const app = createApp(App);
+app.use(createPinia());
+
 app.use(ElementPlus, {
-	locale: zhCn,
-})
-app.use(createPinia())
-app.mount('#app')
+    locale: zhCn,
+});
+app.use(vueRightMenu);
+app.mount("#app");
