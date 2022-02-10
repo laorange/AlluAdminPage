@@ -1,6 +1,6 @@
 <template>
-  <h1 v-if="!tableData">本学期该年级的培养方案为空</h1>
-  <table v-if="tableData">
+  <h1 v-if="!tableData.length">本学期该年级的培养方案为空</h1>
+  <table v-if="tableData.length">
     <tr>
       <th>课程名</th>
       <th>类型</th>
