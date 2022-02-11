@@ -3,7 +3,7 @@
     <div>
       <el-tooltip class="box-item" effect="dark" content="从2007.9起始的第?学期" placement="bottom">学期戳：</el-tooltip>
       <el-tooltip class="box-item" effect="dark" :content="get_period_display(data.period)" placement="bottom">
-        <el-input-number v-model="data.period" :min="30" @change="handlePeriodChange"/>
+        <el-input-number v-model="data.period" :min="29" @change="handlePeriodChange"/>
       </el-tooltip>
     </div>
     <div>
@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <pdc-table :tableData="tableData" :useMenu="true"></pdc-table>
+  <pdc-table :tableData="tableData" :useMenu="true" :max-week="semesterConfig.max_week"></pdc-table>
 
 </template>
 
@@ -38,11 +38,16 @@ let semesterConfig = {
 };
 
 const data = reactive({
-  period: semesterConfig.current_period,
-  semester: 2 - semesterConfig.current_period % 2,
+  period: parseInt(localStorage.getItem("period")) || semesterConfig.current_period,
+  semester: parseInt(localStorage.getItem("semester")) || (2 - semesterConfig.current_period % 2),
 });
 const fetchingData = ref(false);
 let loadService = null;
+
+watch(data, (newData) => {
+  localStorage.setItem("period", "" + newData.period);
+  localStorage.setItem("semester", "" + newData.semester);
+}, {deep: true});
 
 watch(fetchingData, (newStatus) => {
   if (newStatus) {
@@ -113,26 +118,9 @@ const semesterOptions = computed(() => {
     ];
   }
 });
-let courseInfo3d = ref([
-  {
-    "info_id": 37,
-    "type": {
-      "type_id": 1,
-      "name": "未分类",
-      "color": "ffffff",
-    },
-    "period": 30,
-    "semester": 4,
-    "code": "",
-    "ch_name": "形势与政策（2）",
-    "en_name": "",
-    "fr_name": null,
-    "info_plan": [],
-  },
-]);
+let courseInfo3d = ref([]);
 
 function getItemData(data = null, info = "课程信息", color = "ffffff", method = null, teacher = "", group = "") {
-
   return {
     info: info,
     method: method,
@@ -166,6 +154,7 @@ const tableData = computed(() => {
         itemData.teacher = plan.teacher.name;
         if (plan.groups.length !== 0) {
           itemData._data.plan_id = plan.plan_id;
+          itemData._data.plan = plan;
           let _groups = [];
           for (let _group of plan.groups) {
             _groups.push(_group.name);
@@ -174,8 +163,8 @@ const tableData = computed(() => {
           if (plan.plan_course.length !== 0) {
             for (const planCourseElement of plan.plan_course) {
               let _week = parseInt(
-                  (new Date(planCourseElement.date) - new Date(semesterConfig.week1_monday_date)) / 604800000 + 1 + 5,
-              ); //TODO:此处+5是为了测试
+                  (new Date(planCourseElement.date) - new Date(semesterConfig.week1_monday_date)) / 604800000 + 1,
+              );
               if (0 <= _week < semesterConfig.max_week) {
                 itemData.weekRecord[_week] += 2;
               }
@@ -221,7 +210,7 @@ const handlePeriodChange = (newValue, oldValue) => {
     data.semester += newValue % 2 === 0 ? 1 : -1;
   }
   if (data.semester <= 0 || data.semester > 12) {
-    data.semester = 1;
+    data.semester = 2 - newValue % 2;
   }
 };
 
@@ -271,6 +260,8 @@ onMounted(() => {
       },
   );
 });
+
+
 </script>
 
 <style scoped>
