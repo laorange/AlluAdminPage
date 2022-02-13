@@ -1,6 +1,8 @@
 <template>
-  <el-dialog v-model="store.AddCourseDialogData.ifShow" :title="store.AddCourseDialogTitle" :fullscreen="false" width="90%">
+  <el-dialog v-model="store.AddCourseDialogData.ifShow" :title="store.AddCourseDialogTitle"
+             :fullscreen="false" width="90%">
     <div class="dialogBody">
+      <!-- region 表格 -->
       <div class="TimeBlock">
         <div class="TimeBlockItem">星期一</div>
         <div class="TimeBlockItem">星期二</div>
@@ -18,6 +20,7 @@
           </template>
         </el-checkbox-group>
       </div>
+      <!-- endregion 表格 -->
 
       <div class="WeekSelector">
         <el-cascader placeholder="(多选)请选择开课周数" collapse-tags v-model="data.weekSelected"
@@ -48,7 +51,9 @@
 
 <script setup>
 import {useCounterStore} from "@/store/counter";
-import {computed, reactive} from "vue";
+import {computed, reactive, watch} from "vue";
+import axios from "axios";
+import getUrl from "@/assets/urls";
 
 const store = useCounterStore();
 
@@ -91,7 +96,12 @@ const data = reactive({
 
 const apiData = reactive({
   classrooms: null,
-  dates: null,
+  timeBlocks: null,
+});
+
+const storeData = reactive({
+  period: computed(() => store.period),
+  semester: computed(() => store.semester),
 });
 
 const getClassroomData = () => {
@@ -99,19 +109,18 @@ const getClassroomData = () => {
   for (const weekSelectedElement of data.weekSelected) {
     _weeks.push(weekSelectedElement[1]);
   }
-  let week_days = [];
+  let what_days = [];
   let which_lessons = [];
   for (const timeBlockIndex of data.timeBlockIndexes) {
     let _timeBlockData = timeBlockIndex.split(",");
     which_lessons.push(_timeBlockData[0]);
-    week_days.push(_timeBlockData[1]);
+    what_days.push(_timeBlockData[1]);
   }
-  let _url = `https://siae.top/course/advanced/api/classroom/?limit=100&week=${_weeks.join(",")}&what_day=${week_days.join(",")}&which_lesson=${which_lessons.join(",")}`;
-  // console.log(_url);
+  let _url = getUrl.advancedApiClassroom(_weeks, what_days, which_lessons);
   store.axiosMethod(_url,
       response => {
         if (response.data.results) {
-          apiData.dates = response.data.dates;
+          apiData.timeBlocks = response.data.timeBlocks;
           apiData.classrooms = response.data.results;
         }
       },
@@ -119,8 +128,46 @@ const getClassroomData = () => {
 };
 
 const addCoursePost = () => {
-  console.log("提交");
+  function post(data, callbackFunction = (response) => {
+    console.log(response);
+  }) {
+    axios.post(getUrl.courseForPost(), data).then(
+        response => {
+          callbackFunction(response);
+        },
+        error => {
+          console.warn(error.message);
+        },
+    );
+  }
+
+  for (const timeBlockIndex in apiData.timeBlocks) {
+    let timeBlock = apiData.timeBlocks[timeBlockIndex];
+    let callbackFunction = timeBlockIndex === apiData.timeBlocks.length - 1 ? () => {
+      store.myReset();
+    } : undefined;
+    post({
+      plan: store.AddCourseDialogData.plan_id, room: data.selectedClassroom,
+      date: timeBlock.date, which_lesson: timeBlock.which_lesson,
+    }, callbackFunction);
+  }
+  store.myReset();
 };
+
+watch(storeData, (newData) => {
+  localStorage.setItem("period", "" + newData.period);
+  localStorage.setItem("semester", "" + newData.semester);
+}, {deep: true});
+
+watch(() => data.weekSelected, () => {
+  apiData.classrooms = null;
+  apiData.timeBlocks = null;
+}, {deep: true});
+
+watch(() => data.timeBlockIndexes, () => {
+  apiData.classrooms = null;
+  apiData.timeBlocks = null;
+}, {deep: true});
 </script>
 
 <style>
@@ -139,10 +186,6 @@ const addCoursePost = () => {
 .TimeBlock .el-checkbox-button__inner {
   width: 100%;
 }
-
-/*.WeekSelector .el-input__inner {*/
-/*  width: 90vh !important;*/
-/*}*/
 
 .WeekSelector {
   width: 100%;

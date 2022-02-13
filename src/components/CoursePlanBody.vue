@@ -20,7 +20,6 @@
 import {onMounted} from "vue";
 
 import GradeSelector from "./CoursePlan/GradeSelector";
-// import PdcTable from "./PdcTable";
 import LoadingMask from "./LoadingMask";
 
 import TableBody from "./CoursePlan/TableBody";

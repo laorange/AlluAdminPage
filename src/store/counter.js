@@ -111,5 +111,9 @@ export const useCounterStore = defineStore("counter", {
                 },
             );
         },
+        myReset() {
+            this.$reset()
+            this.onMountedHook();
+        },
     },
 });

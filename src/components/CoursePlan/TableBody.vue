@@ -31,8 +31,7 @@
       <td>{{ item.teacher }}</td>
       <td>{{ item.groups }}</td>
       <template v-for="(_CourseHourInThisWeek, _index) in item.weekRecord" :key="_index">
-        <!--        <td v-if="_CourseHourInThisWeek" @dblclick="showCourseListDialog(item._data.plan_id, _index)">-->
-        <td v-if="_CourseHourInThisWeek" @dblclick="store.getDataAndShowCourseListDialog(item._data.plan_id, _index)">
+        <td v-if="_CourseHourInThisWeek" @dblclick="store.getDataAndShowCourseListDialog(item._data.plan_id, _index)" class="CourseWeeklyHours">
           {{ _CourseHourInThisWeek }}
         </td>
         <td v-else></td>
@@ -44,6 +43,7 @@
 <script setup>
 import {computed, defineProps} from "vue";
 import {useCounterStore} from "@/store/counter";
+import getUrl from "@/assets/urls";
 
 const store = useCounterStore();
 
@@ -133,23 +133,28 @@ const menuHandle = {
         editInfo(context) {
           console.log(context);
           console.log("编辑课程信息");
-          window.location.href = `/admin/course/courseinfo/${context.info_id}/change/`;
+          // window.location.href = `/admin/course/courseinfo/${context.info_id}/change/`;
+          window.location.href = getUrl.courseInfoChangePage(context.info_id);
         },
         addPlanCourse(context) {
           console.log("新增理论课教学计划");
-          window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=Course`;
+          // window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=Course`;
+          window.location.href = getUrl.coursePlanAddPage(context.info_id);
         },
         addPlanTd(context) {
           console.log("新增习题课教学计划");
-          window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=TD`;
+          // window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=TD`;
+          window.location.href = getUrl.coursePlanAddPage(context.info_id, "TD");
         },
         addPlanTp(context) {
           console.log("新增实验课教学计划");
-          window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=TP`;
+          // window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=TP`;
+          window.location.href = getUrl.coursePlanAddPage(context.info_id, "TP");
         },
         addPlanDs(context) {
           console.log("新增考试计划");
-          window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=DS`;
+          // window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=DS`;
+          window.location.href = getUrl.coursePlanAddPage(context.info_id, "DS");
         },
         _cancel() {
           console.log("取消");
@@ -184,13 +189,6 @@ const menuHandle = {
     };
   },
 };
-
-const showCourseListDialog = (plan_id, week) => {
-  if (week >= 1) {
-    console.log(plan_id, week);
-    store.getDataAndShowCourseListDialog(plan_id, week);
-  }
-};
 </script>
 
 <style>
@@ -206,6 +204,13 @@ tr, th, td {
 
 .WeekCol {
   width: 20px;
+}
+
+.CourseWeeklyHours {
+  /*-moz-user-select: none;*/
+  /*-webkit-user-select: none;*/
+  /*user-select: none;*/
+  cursor: pointer;
 }
 
 /*右键菜单的样式 强制调整*/
