@@ -82,7 +82,8 @@ const getData = computed(() => {
 });
 
 const redirect = (url) => {
-  window.location.href = url;
+  // window.location.href = url;
+  window.open(url);
 };
 </script>
 

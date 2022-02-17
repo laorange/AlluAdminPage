@@ -133,28 +133,28 @@ const menuHandle = {
         editInfo(context) {
           console.log(context);
           console.log("编辑课程信息");
-          // window.location.href = `/admin/course/courseinfo/${context.info_id}/change/`;
-          window.location.href = getUrl.courseInfoChangePage(context.info_id);
+          // window.location.href = getUrl.courseInfoChangePage(context.info_id);
+          window.open(getUrl.courseInfoChangePage(context.info_id));
         },
         addPlanCourse(context) {
           console.log("新增理论课教学计划");
-          // window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=Course`;
-          window.location.href = getUrl.coursePlanAddPage(context.info_id);
+          // window.location.href = getUrl.coursePlanAddPage(context.info_id);
+          window.open(getUrl.coursePlanAddPage(context.info_id));
         },
         addPlanTd(context) {
           console.log("新增习题课教学计划");
-          // window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=TD`;
-          window.location.href = getUrl.coursePlanAddPage(context.info_id, "TD");
+          // window.location.href = getUrl.coursePlanAddPage(context.info_id, "TD");
+          window.open(getUrl.coursePlanAddPage(context.info_id, "TD"));
         },
         addPlanTp(context) {
           console.log("新增实验课教学计划");
-          // window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=TP`;
-          window.location.href = getUrl.coursePlanAddPage(context.info_id, "TP");
+          // window.location.href = getUrl.coursePlanAddPage(context.info_id, "TP");
+          window.open(getUrl.coursePlanAddPage(context.info_id, "TP"));
         },
         addPlanDs(context) {
           console.log("新增考试计划");
-          // window.location.href = `/admin/course/courseplan/add/?info=${context.info_id}&method=DS`;
-          window.location.href = getUrl.coursePlanAddPage(context.info_id, "DS");
+          // window.location.href = getUrl.coursePlanAddPage(context.info_id, "DS");
+          window.open(getUrl.coursePlanAddPage(context.info_id, "DS"));
         },
         _cancel() {
           console.log("取消");
@@ -174,7 +174,8 @@ const menuHandle = {
         editCoursePlan(context) {
           console.log(context);
           console.log("查看资料点击事件");
-          window.location.href = `/admin/course/courseplan/${context.plan_id}/change/`;
+          // window.location.href = `/admin/course/courseplan/${context.plan_id}/change/`;
+          window.open(`/admin/course/courseplan/${context.plan_id}/change/`);
         },
         addCourse(context) {
           console.log("添加课程", context);

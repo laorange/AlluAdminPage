@@ -77,7 +77,7 @@ export const useCounterStore = defineStore("counter", {
         getDataAndShowCourseListDialog(plan_id, week) {
             let _this = this;
 
-            function addCourseToData(url = `https://siae.top/course/api/Course/?plan=${_this.CourseListDialogData.plan_id}&week=${_this.CourseListDialogData.week}`) {
+            function addCourseToData(url = `https://siae.top/course/api/Course2d/?plan=${_this.CourseListDialogData.plan_id}&week=${_this.CourseListDialogData.week}`) {
                 _this.axiosMethod(url, response => {
                     if (response.data.results) {
                         for (const courseInfo of response.data.results) {
